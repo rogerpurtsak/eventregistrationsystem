@@ -4,6 +4,30 @@
 
 Simple event registration application with admin event creation and public participant registration.
 
+## Quick start
+
+```bash
+git clone https://github.com/rogerpurtsak/eventregistrationsystem.git
+cd eventregistrationsystem
+```
+
+Start the backend:
+
+```powershell
+cd backend
+.\gradlew.bat bootRun
+```
+
+Open a second terminal and start the frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser.
+
 ## Technologies
 
 - Java 21
