@@ -1,20 +1,33 @@
 # Event Registration System
 
-A full-stack event registration application built with Spring Boot (backend) and a frontend (TBD).
+## Description
+
+Simple event registration application with admin event creation and public participant registration.
+
+## Technologies
+
+- Java 21
+- Spring Boot 3.4.1
+- Spring Data JPA
+- H2 Database
+- React
+- Vite
+
+## Requirements
+
+- Java 21
+- Node.js 20.19+ (or 22.12+)
+- npm
 
 ## Project structure
 
 ```
 event-registration-system/
-  backend/    Spring Boot REST API (Java 21, Maven)
-  frontend/   Frontend application (TBD)
+  backend/    Spring Boot REST API
+  frontend/   React frontend
 ```
 
-## Backend
-
-**Tech stack:** Java 21 · Spring Boot 3.4.1 · Spring Data JPA · H2 (in-memory) · Bean Validation · Gradle
-
-### Run locally
+## Backend setup
 
 ```bash
 cd backend
@@ -28,4 +41,135 @@ cd backend
 .\gradlew.bat bootRun
 ```
 
-The server starts on `http://localhost:8080`.
+Backend runs on: `http://localhost:8080`
+
+## Frontend setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on: `http://localhost:5173`
+
+## Admin credentials
+
+Configured in `backend/src/main/resources/application.properties`.
+
+Default credentials:
+
+```
+email: admin@example.com
+password: admin123
+```
+
+## H2 database
+
+H2 console: `http://localhost:8080/h2-console`
+
+```
+JDBC URL:  jdbc:h2:file:./data/eventdb
+Username:  sa
+Password:  (empty)
+```
+
+## API endpoints
+
+### GET /api/events
+
+Returns all events with registration counts.
+
+No token required.
+
+Response:
+```json
+[
+  {
+    "id": 1,
+    "title": "Jooksuvõistlus",
+    "eventTime": "2026-08-01T10:00:00",
+    "maxParticipants": 100,
+    "registeredCount": 3,
+    "availableSpots": 97
+  }
+]
+```
+
+---
+
+### POST /api/auth/login
+
+Admin login. Returns a token.
+
+No token required.
+
+Request:
+```json
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
+```
+
+Response:
+```json
+{
+  "token": "3f2a1b4c-..."
+}
+```
+
+---
+
+### POST /api/admin/events
+
+Creates a new event. **Requires token.**
+
+Header:
+```
+Authorization: Bearer <token>
+```
+
+Request:
+```json
+{
+  "title": "Jooksuvõistlus",
+  "eventTime": "2026-08-01T10:00:00",
+  "maxParticipants": 100
+}
+```
+
+Response:
+```json
+{
+  "id": 1,
+  "title": "Jooksuvõistlus",
+  "eventTime": "2026-08-01T10:00:00",
+  "maxParticipants": 100,
+  "registeredCount": 0,
+  "availableSpots": 100
+}
+```
+
+---
+
+### POST /api/events/{eventId}/registrations
+
+Registers a participant for an event.
+
+No token required.
+
+Request:
+```json
+{
+  "firstName": "Jaan",
+  "lastName": "Tamm",
+  "personalCode": "38001011234"
+}
+```
+
+Response: `201 Created` (no body)
+
+Errors:
+- `404` — event not found
+- `409` — event is full or personal code already registered
