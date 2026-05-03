@@ -26,6 +26,11 @@
 build/
 backend/.gradle/
 backend/build/
+backend/bin/
+
+# Node
+node_modules/
+frontend/dist/
 
 # IDE
 .idea/
