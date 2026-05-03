@@ -1,7 +1,9 @@
 package com.example.eventregistration.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.eventregistration.dto.RegistrationRequest;
 import com.example.eventregistration.entity.EventItem;
@@ -20,19 +22,15 @@ public class RegistrationService {
 
     public void registerForEvent(Long eventItemId, RegistrationRequest request) {
 
-        if (eventItemId == null) {
-            throw new RuntimeException("Event ID cannot be null.");
-        }
-
         EventItem eventItem = eventItemRepository.findById(eventItemId)
-        .orElseThrow(() -> new RuntimeException("Event not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found."));
 
         if (registrationRepository.countByEventItemId(eventItemId) >= eventItem.getMaxParticipants()) {
-            throw new RuntimeException("No more spots available for this event.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is full.");
         }
 
         if (registrationRepository.existsByEventItemIdAndPersonalCode(eventItemId, request.personalCode)) {
-            throw new RuntimeException("You have already registered for this event.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You have already registered for this event.");
         }
 
         Registration registration = new Registration();
@@ -42,7 +40,5 @@ public class RegistrationService {
         registration.setEventItem(eventItem);
 
         registrationRepository.save(registration);
-
-        
     }
 }
