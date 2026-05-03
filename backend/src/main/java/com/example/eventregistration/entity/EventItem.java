@@ -13,7 +13,7 @@ public class EventItem {
     private Long id;
     private String title;
     private LocalDateTime eventTime;
-    private int maxParticipants;
+    private Integer maxParticipants;
 
     public String getTitle() {
         return title;
@@ -31,11 +31,11 @@ public class EventItem {
         this.eventTime = eventTime;
     }
 
-    public int getMaxParticipants() {
+    public Integer getMaxParticipants() {
         return maxParticipants;
     }
 
-    public void setMaxParticipants(int maxParticipants) {
+    public void setMaxParticipants(Integer maxParticipants) {
         this.maxParticipants = maxParticipants;
     }
 
