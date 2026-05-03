@@ -39,7 +39,6 @@ export default function App() {
     localStorage.setItem('adminToken', data.token);
     setAdminToken(data.token);
     setShowLoginForm(false);
-    setShowEventForm(true);
   }
 
   function handleLogout() {
@@ -68,18 +67,12 @@ export default function App() {
 
   return (
     <>
-      <Header />
-
-      <div>
-        {!adminToken ? (
-          <button onClick={() => setShowLoginForm(true)}>Admin Login</button>
-        ) : (
-          <>
-            <button onClick={() => setShowEventForm(true)}>Create Event</button>
-            <button onClick={handleLogout}>Logout</button>
-          </>
-        )}
-      </div>
+      <Header
+        adminToken={adminToken}
+        onLoginClick={() => setShowLoginForm(true)}
+        onLogout={handleLogout}
+        onCreateEvent={() => setShowEventForm(true)}
+      />
 
       {error && <p>{error}</p>}
       {successMessage && <p>{successMessage}</p>}

@@ -7,9 +7,22 @@ export default function RegistrationForm({ event, onSubmit, onCancel }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  function validate() {
+    if (!firstName.trim()) return 'First name is required.';
+    if (!lastName.trim()) return 'Last name is required.';
+    if (!personalCode.trim()) return 'Personal code is required.';
+    if (personalCode.trim().length !== 11) return 'Personal code must be 11 characters.';
+    return null;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     try {
       await onSubmit(event.id, { firstName, lastName, personalCode });
       setSuccess(true);
@@ -44,7 +57,7 @@ export default function RegistrationForm({ event, onSubmit, onCancel }) {
       />
       <input
         type="text"
-        placeholder="Personal code"
+        placeholder="Personal code (11 characters)"
         value={personalCode}
         onChange={e => setPersonalCode(e.target.value)}
       />
