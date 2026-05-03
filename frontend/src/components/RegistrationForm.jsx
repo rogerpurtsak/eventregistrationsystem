@@ -5,6 +5,7 @@ export default function RegistrationForm({ event, onSubmit, onCancel }) {
   const [lastName, setLastName] = useState('');
   const [personalCode, setPersonalCode] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   function validate() {
@@ -23,18 +24,21 @@ export default function RegistrationForm({ event, onSubmit, onCancel }) {
       setError(validationError);
       return;
     }
+    setLoading(true);
     try {
       await onSubmit(event.id, { firstName, lastName, personalCode });
       setSuccess(true);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   }
 
   if (success) {
     return (
-      <div>
-        <p>Registration successful!</p>
+      <div className="event-card">
+        <p className="success">Registration successful!</p>
         <button onClick={onCancel}>Close</button>
       </div>
     );
@@ -61,9 +65,13 @@ export default function RegistrationForm({ event, onSubmit, onCancel }) {
         value={personalCode}
         onChange={e => setPersonalCode(e.target.value)}
       />
-      {error && <p>{error}</p>}
-      <button type="submit">Register</button>
-      <button type="button" onClick={onCancel}>Cancel</button>
+      {error && <p className="error">{error}</p>}
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
+        <button type="button" onClick={onCancel}>Cancel</button>
+      </div>
     </form>
   );
 }

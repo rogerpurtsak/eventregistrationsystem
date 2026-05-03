@@ -5,6 +5,7 @@ export default function EventForm({ onSubmit, onCancel }) {
   const [eventTime, setEventTime] = useState('');
   const [maxParticipants, setMaxParticipants] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   function validate() {
     if (!title.trim()) return 'Title is required.';
@@ -21,6 +22,7 @@ export default function EventForm({ onSubmit, onCancel }) {
       setError(validationError);
       return;
     }
+    setLoading(true);
     try {
       await onSubmit({ title, eventTime, maxParticipants: parseInt(maxParticipants) });
       setTitle('');
@@ -28,6 +30,8 @@ export default function EventForm({ onSubmit, onCancel }) {
       setMaxParticipants('');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,9 +55,13 @@ export default function EventForm({ onSubmit, onCancel }) {
         value={maxParticipants}
         onChange={e => setMaxParticipants(e.target.value)}
       />
-      {error && <p>{error}</p>}
-      <button type="submit">Create</button>
-      {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
+      {error && <p className="error">{error}</p>}
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Creating...' : 'Create'}
+        </button>
+        {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
+      </div>
     </form>
   );
 }
