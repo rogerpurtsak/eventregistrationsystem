@@ -21,11 +21,11 @@ cd backend
 ./gradlew bootRun
 ```
 
-Windows:
+Windows (PowerShell):
 
-```bash
+```powershell
 cd backend
-gradlew.bat bootRun
+.\gradlew.bat bootRun
 ```
 
 The server starts on `http://localhost:8080`.
