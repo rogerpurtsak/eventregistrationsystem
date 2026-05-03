@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function EventForm({ onSubmit }) {
+export default function EventForm({ onSubmit, onCancel }) {
   const [title, setTitle] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [maxParticipants, setMaxParticipants] = useState('');
@@ -41,6 +41,7 @@ export default function EventForm({ onSubmit }) {
       />
       {error && <p>{error}</p>}
       <button type="submit">Create</button>
+      {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
     </form>
   );
 }

@@ -4,45 +4,100 @@ import EventList from './components/EventList';
 import LoginForm from './components/LoginForm';
 import EventForm from './components/EventForm';
 import RegistrationForm from './components/RegistrationForm';
-import { getEvents, login, createEvent, registerToEvent } from './api/api';
+import { getEvents, loginAdmin, createEvent, registerToEvent } from './api/api';
 
 export default function App() {
   const [events, setEvents] = useState([]);
-  const [token, setToken] = useState(null);
+  const [adminToken, setAdminToken] = useState(localStorage.getItem('adminToken'));
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     loadEvents();
   }, []);
 
   async function loadEvents() {
+    setLoading(true);
+    setError('');
     try {
       const data = await getEvents();
       setEvents(data);
     } catch (err) {
-      console.error(err);
+      setError('Failed to load events.');
+    } finally {
+      setLoading(false);
     }
   }
 
   async function handleLogin(email, password) {
-    const data = await login(email, password);
-    setToken(data.token);
+    setError('');
+    const data = await loginAdmin(email, password);
+    localStorage.setItem('adminToken', data.token);
+    setAdminToken(data.token);
+    setShowLoginForm(false);
+    setShowEventForm(true);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('adminToken');
+    setAdminToken(null);
+    setShowEventForm(false);
   }
 
   async function handleCreateEvent(eventData) {
-    await createEvent(token, eventData);
+    setError('');
+    await createEvent(eventData, adminToken);
+    setSuccessMessage('Event created!');
+    setTimeout(() => setSuccessMessage(''), 3000);
+    setShowEventForm(false);
     await loadEvents();
   }
 
   async function handleRegister(eventId, registrationData) {
+    setError('');
     await registerToEvent(eventId, registrationData);
+    setSuccessMessage('Registration successful!');
+    setTimeout(() => setSuccessMessage(''), 3000);
+    setSelectedEvent(null);
     await loadEvents();
   }
 
   return (
     <>
       <Header />
-      <EventList events={events} onRegister={setSelectedEvent} />
+
+      <div>
+        {!adminToken ? (
+          <button onClick={() => setShowLoginForm(true)}>Admin Login</button>
+        ) : (
+          <>
+            <button onClick={() => setShowEventForm(true)}>Create Event</button>
+            <button onClick={handleLogout}>Logout</button>
+          </>
+        )}
+      </div>
+
+      {error && <p>{error}</p>}
+      {successMessage && <p>{successMessage}</p>}
+
+      {showLoginForm && (
+        <LoginForm
+          onLogin={handleLogin}
+          onCancel={() => setShowLoginForm(false)}
+        />
+      )}
+
+      {showEventForm && (
+        <EventForm
+          onSubmit={handleCreateEvent}
+          onCancel={() => setShowEventForm(false)}
+        />
+      )}
+
       {selectedEvent && (
         <RegistrationForm
           event={selectedEvent}
@@ -50,10 +105,11 @@ export default function App() {
           onCancel={() => setSelectedEvent(null)}
         />
       )}
-      {!token ? (
-        <LoginForm onLogin={handleLogin} />
+
+      {loading ? (
+        <p>Loading...</p>
       ) : (
-        <EventForm onSubmit={handleCreateEvent} />
+        <EventList events={events} onRegister={setSelectedEvent} />
       )}
     </>
   );

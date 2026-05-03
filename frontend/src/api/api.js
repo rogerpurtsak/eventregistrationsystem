@@ -1,13 +1,13 @@
-const BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 export async function getEvents() {
-  const res = await fetch(`${BASE_URL}/events`);
+  const res = await fetch(`${API_BASE_URL}/events`);
   if (!res.ok) throw new Error('Failed to fetch events');
   return res.json();
 }
 
-export async function login(email, password) {
-  const res = await fetch(`${BASE_URL}/auth/login`, {
+export async function loginAdmin(email, password) {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -19,8 +19,8 @@ export async function login(email, password) {
   return res.json();
 }
 
-export async function createEvent(token, eventData) {
-  const res = await fetch(`${BASE_URL}/admin/events`, {
+export async function createEvent(eventData, token) {
+  const res = await fetch(`${API_BASE_URL}/admin/events`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function createEvent(token, eventData) {
 }
 
 export async function registerToEvent(eventId, registrationData) {
-  const res = await fetch(`${BASE_URL}/events/${eventId}/registrations`, {
+  const res = await fetch(`${API_BASE_URL}/events/${eventId}/registrations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(registrationData),
