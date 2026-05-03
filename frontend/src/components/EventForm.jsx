@@ -6,9 +6,21 @@ export default function EventForm({ onSubmit, onCancel }) {
   const [maxParticipants, setMaxParticipants] = useState('');
   const [error, setError] = useState('');
 
+  function validate() {
+    if (!title.trim()) return 'Title is required.';
+    if (!eventTime) return 'Event time is required.';
+    if (!maxParticipants || parseInt(maxParticipants) < 1) return 'Max participants must be at least 1.';
+    return null;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     try {
       await onSubmit({ title, eventTime, maxParticipants: parseInt(maxParticipants) });
       setTitle('');
