@@ -74,8 +74,8 @@ export default function App() {
         onCreateEvent={() => setShowEventForm(true)}
       />
 
-      {error && <p>{error}</p>}
-      {successMessage && <p>{successMessage}</p>}
+      {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
 
       {showLoginForm && (
         <LoginForm
@@ -100,7 +100,7 @@ export default function App() {
       )}
 
       {loading ? (
-        <p>Loading...</p>
+        <p className="loading">Loading events...</p>
       ) : (
         <EventList events={events} onRegister={setSelectedEvent} />
       )}
