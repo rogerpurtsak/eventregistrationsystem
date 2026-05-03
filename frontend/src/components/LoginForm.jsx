@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function LoginForm({ onLogin }) {
+export default function LoginForm({ onLogin, onCancel }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,6 +32,7 @@ export default function LoginForm({ onLogin }) {
       />
       {error && <p>{error}</p>}
       <button type="submit">Login</button>
+      {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
     </form>
   );
 }
